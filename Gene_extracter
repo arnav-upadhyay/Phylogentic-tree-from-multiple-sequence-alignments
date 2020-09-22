@@ -1,0 +1,119 @@
+from Bio.Blast import NCBIWWW
+import sys,os
+from Bio import SeqIO
+from Bio.Blast import NCBIXML
+from Bio import SearchIO
+#set config here based on requirements
+
+
+path = "./";
+
+# add species names according to there priority or you can add only one species name ALSO uncomment lines according to your os
+species=["species1", "species2", "species3"]
+
+
+fasta_file_list = [];
+# this function recursively iterates on all the directories and subdirectories and stores all the fasta files in an array
+def create_fasta_list(path):
+    # for windows
+    # for root,dirs,file in os.walk(path + '\\fasta\\'):
+    # for ubuntu
+    for root,dirs,file in os.walk(path + '/fasta/'):
+        for file_ in file:
+            temp=os.path.join(root,file_)
+            print(temp)
+            # print("last 5 chars:",temp[-  5:])
+            if(temp[-5:]=="fasta"):
+
+                # for windows
+                # temp = temp.split("\\")
+                
+                #for ubuntu
+                temp = temp.split("/")
+
+                temp = temp[-1:][0]
+                fasta_file_list.extend([temp])
+                create_fasta_list(temp)        
+
+if __name__=='__main__':
+    create_fasta_list(path)
+    
+
+for name in fasta_file_list:
+    print("\nfile:", name)
+
+
+id_list = []
+result = {}
+priority_index = len(species)
+temp = []
+added_name = ""
+
+for name in fasta_file_list:
+    # for windows
+    # file_name = os.path.join(sys.path[0]+'\\fasta\\'+ name)
+
+    # for linux
+    file_name = os.path.join(sys.path[0]+'/fasta/'+ name)
+    print(file_name)
+    temp = []
+    added_name = ""
+    added_new_value = False
+    priority_index = len(species)
+
+    # for windows
+    # for index, record in enumerate(SeqIO.parse(file_name, "\\fasta\\")):
+
+    # for ubuntu
+    for index, record in enumerate(SeqIO.parse(file_name, "fasta")):
+        # to see the details of all the records uncomment the below line
+        id_list.append(record.id)
+        record_id = record.id.split('@')[0]
+        
+        try:
+            index = species.index(record_id)
+        except ValueError:
+            index = len(species)
+
+        print("\nrecord_id:",record_id, "index:", index , "priority index:", priority_index)
+        if(record_id in species and index < priority_index):
+            print("\nRecordID:=============================================================================", record_id)
+
+            priority_index = index
+            temp = [{"Record_ID":record_id, "Sequence": str(record.seq), "File": str(file_name)}]
+            added_name = record_id
+            added_new_value = True
+        
+    if added_new_value and added_name is not '' and result.get(added_name, False):
+        result[added_name].extend(temp)
+    else:
+        if added_new_value and added_name is not '':
+            result[added_name] = temp
+
+    added_new_value = False
+            
+
+print("============================+Result=========================================================", 
+        result, 
+    "=================================Result=========================================================")
+
+import json
+#to save the RESULT in txt format
+for key, value in result.items(): 
+    # print("\nkey:", key, "\nValue:", value);
+
+    # for windows
+    # with open(os.path.join(sys.path[0] +'\\results\\' + key + '.fasta'), 'w+') as filehandle:
+
+    # for ubuntu
+    with open(os.path.join(sys.path[0] + '/results/' + key + '.csv'), 'w+') as filehandle:
+        # print("Value:", value)
+        if len(value) > 0:
+            filehandle.write("Record_ID, Sequence, File")
+            filehandle.write("\n")
+
+
+        # value = json.dumps(value)
+        for val in value:
+            filehandle.write(val["Record_ID"] + ',' +   val["Sequence"] + ',' +  val["File"])
+            filehandle.write("\n")

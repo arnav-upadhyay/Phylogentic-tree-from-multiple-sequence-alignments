@@ -1,4 +1,4 @@
-# Phylogentic-tree-from-multiple-sequence-alignements
+# Tree from Transcriptome
 Python codes to make phylogenetic analysis easier
 
 This repositry have collection of Python codes which can help you make a Phylogentic tree If you already have a Multiple sequence alighnemets and you want to add your species to that tree.

@@ -13,7 +13,7 @@ Gene_extracter- this is the first code I wrote with my dear friend @abhinav1602 
 Another feature of this code is that you can select from which species you want to extrct single genes from, Since you don't want to select random species(It's better to select a phylogentic closure species than an outgroup species)
 
 **Second Code**
-adding_genes_to_msa
+adding_proteins_to_msa
 
 After getting the proteins from the Transcriptome the next step is to add those proteins to the respective Multiple sequence alignement. Here in this script it uses three types of files. 1. Postion.csv in which there is one column is the gene with second column the MSA file in which it has to be added.
 2. proteins.fasta  - all the proteins extected from your transcriptome
